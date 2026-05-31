@@ -1,0 +1,24 @@
+# Maven
+**/target/
+
+# IntelliJ
+**/.idea/
+**/*.iml
+**/.classpath
+**/.project
+**/.settings/
+**/.metadata/
+
+# Environment
+**/application-prod.yml
+**/.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+**/.vscode/
+
+# Binary
+**/bin/

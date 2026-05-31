@@ -1,0 +1,15 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Force LF for Java files (consistent across Windows/Mac/Linux)
+*.java text eol=lf
+*.yml text eol=lf
+*.xml text eol=lf
+*.properties text eol=lf
+*.md text eol=lf
+
+# Binary files
+*.jar binary
+*.class binary
+*.png binary
+*.jpg binary
