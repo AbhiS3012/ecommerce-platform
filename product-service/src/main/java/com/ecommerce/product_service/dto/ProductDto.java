@@ -58,7 +58,7 @@ public class ProductDto {
 		private String description;
 		private BigDecimal price;
 		private Integer stock;
-		private String category;
+		private Product.Category category;
 		private boolean active;
 		private LocalDateTime createdAt;
 	}
