@@ -59,7 +59,7 @@ public class ProductDto {
 		private BigDecimal price;
 		private Integer stock;
 		private Product.Category category;
-		private boolean active;
+		private Product.Status status;
 		private LocalDateTime createdAt;
 	}
 

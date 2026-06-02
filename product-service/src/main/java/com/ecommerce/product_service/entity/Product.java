@@ -52,8 +52,9 @@ public class Product {
 	private Category category;
 
 	@Builder.Default
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private boolean active = true;
+	private Status status = Status.ACTIVE;
 
 	@CreationTimestamp
 	@Column(updatable = false)
@@ -64,6 +65,10 @@ public class Product {
 
 	public enum Category {
 		ELECTRONICS, CLOTHING, BOOKS, FOOD, OTHER
+	}
+	
+	public enum Status {
+		ACTIVE, INACTIVE, DISCONTINUED
 	}
 
 }

@@ -21,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-	
-	private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class); 
+
+	private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
 	private final JwtUtil jwtUtil;
 
@@ -41,12 +41,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				if (username != null) {
 
 					UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-								username, null, List.of(new SimpleGrantedAuthority(role)));
+							username, null, List.of(new SimpleGrantedAuthority(role)));
 
-						usernamePasswordAuthenticationToken
-								.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+					usernamePasswordAuthenticationToken
+							.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-						SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+					SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 				}
 
 			} catch (Exception e) {
