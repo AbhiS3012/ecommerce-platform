@@ -6,38 +6,27 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "products")
+@Table(name = "attribute_values")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class Product extends AuditableEntity {
+public class AttributeValue extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	@Column(nullable = false)
-	private String name;
-
-	@Column(nullable = false, unique = true)
-	private String slug;
-
-	@Column(columnDefinition = "TEXT")
-	private String description;
-
-	@Column(nullable = false)
-	@Builder.Default
-	private Boolean active = true;
+	private String value; // e.g. "Red", "XL", "Cotton"
 
 	@ManyToOne
-	@JoinColumn(name = "category_id")
-	private Category category;
+	@JoinColumn(name = "attribute_id")
+	private Attribute attribute;
 
 }

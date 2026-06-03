@@ -6,20 +6,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "products")
+@Table(name = "categories")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class Product extends AuditableEntity {
+public class Category extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -32,12 +31,8 @@ public class Product extends AuditableEntity {
 	@Column(columnDefinition = "TEXT")
 	private String description;
 
-	@Column(nullable = false)
-	@Builder.Default
-	private Boolean active = true;
-
 	@ManyToOne
-	@JoinColumn(name = "category_id")
-	private Category category;
+	@JoinColumn(name = "parent_id")
+	private Category parent;
 
 }
