@@ -8,27 +8,24 @@ import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-@Data
-@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
 @MappedSuperclass
 public abstract class AuditableEntity extends BaseEntity {
 
-	private static final long serialVersionUID = 1L;
-
-	@Column(nullable = false, updatable = false)
 	@CreationTimestamp
+	@Column(nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 
-	@Column(nullable = false)
 	@UpdateTimestamp
+	@Column(nullable = false)
 	private LocalDateTime updatedAt;
-
 }
