@@ -6,10 +6,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ecommerce.product_service.dto.CategoryDto.CategoryRequest;
 import com.ecommerce.product_service.dto.CategoryDto.CategoryResponse;
 import com.ecommerce.product_service.dto.CategoryDto.CategorySummary;
-import com.ecommerce.product_service.dto.CategoryDto.CreateCategoryRequest;
-import com.ecommerce.product_service.dto.CategoryDto.UpdateCategoryRequest;
 import com.ecommerce.product_service.entity.Category;
 import com.ecommerce.product_service.exception.InvalidOperationException;
 import com.ecommerce.product_service.exception.ResourceNotFoundException;
@@ -25,7 +24,7 @@ public class CategoryService {
 	private final CategoryRepository categoryRepository;
 	
 	@Transactional
-	public CategoryResponse createCategory(CreateCategoryRequest request) {
+	public CategoryResponse createCategory(CategoryRequest request) {
 		//auto generate slug from name
 		String slug = SlugUtil.generateSlug(request.getName());
 		
@@ -66,7 +65,7 @@ public class CategoryService {
 	}
 	
 	@Transactional
-	public CategoryResponse updateCategory(Long id, UpdateCategoryRequest request) {
+	public CategoryResponse updateCategory(Long id, CategoryRequest request) {
 		Category category = categoryRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 		

@@ -14,21 +14,7 @@ public class CategoryDto {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@Builder
-	public static class CreateCategoryRequest {
-		@NotBlank(message = "Name is required")
-		private String name;
-
-		private String description;
-
-		private Long parentId;
-	}
-	
-	@Getter
-	@Setter
-	@NoArgsConstructor
-	@AllArgsConstructor
-	@Builder
-	public static class UpdateCategoryRequest {
+	public static class CategoryRequest {
 		@NotBlank(message = "Name is required")
 		private String name;
 

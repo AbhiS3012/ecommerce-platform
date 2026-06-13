@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecommerce.product_service.dto.CategoryDto.CategoryRequest;
 import com.ecommerce.product_service.dto.CategoryDto.CategoryResponse;
 import com.ecommerce.product_service.dto.CategoryDto.CategorySummary;
-import com.ecommerce.product_service.dto.CategoryDto.CreateCategoryRequest;
-import com.ecommerce.product_service.dto.CategoryDto.UpdateCategoryRequest;
 import com.ecommerce.product_service.service.CategoryService;
 
 import jakarta.validation.Valid;
@@ -29,7 +28,7 @@ public class CategoryController {
 	private final CategoryService categoryService;
 
 	@PostMapping
-	public ResponseEntity<CategoryResponse> createCategory(@RequestBody @Valid CreateCategoryRequest request) {
+	public ResponseEntity<CategoryResponse> createCategory(@RequestBody @Valid CategoryRequest request) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(request));
 	}
 
@@ -55,7 +54,7 @@ public class CategoryController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<CategoryResponse> updateCategory(@PathVariable Long id,
-			@RequestBody @Valid UpdateCategoryRequest request) {
+			@RequestBody @Valid CategoryRequest request) {
 		return ResponseEntity.ok().body(categoryService.updateCategory(id, request));
 	}
 
