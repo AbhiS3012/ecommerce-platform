@@ -1,54 +1,35 @@
 package com.ecommerce.product_service.dto;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-import com.ecommerce.product_service.entity.Product;
-
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 public class ProductDto {
 
-	@Data
+	@Getter
+	@Setter
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@Builder
-	public static class CreateRequest {
+	public static class ProductRequest {
 		@NotBlank(message = "Name is required")
 		private String name;
 
 		private String description;
 
-		@NotNull(message = "price is required")
-		@DecimalMin(value = "0.0", message = "Price must be greater than 0", inclusive = false)
-		private BigDecimal price;
-
-		@NotNull(message = "Stock is required")
-		@Min(value = 0, message = "Stock cannot be negative")
-		private Integer stock;
+		@Builder.Default
+		private boolean active = true;
 
 		@NotNull(message = "Category is required")
-		private Product.Category category;
+		private Long categoryId;
 	}
 
-	@Data
-	@NoArgsConstructor
-	@AllArgsConstructor
-	@Builder
-	public static class UpdateRequest {
-		private String description;
-		private BigDecimal price;
-		private Integer stock;
-	}
-
-	@Data
+	@Getter
+	@Setter
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@Builder
@@ -56,11 +37,25 @@ public class ProductDto {
 		private Long id;
 		private String name;
 		private String description;
-		private BigDecimal price;
-		private Integer stock;
-		private Product.Category category;
-		private Product.Status status;
-		private LocalDateTime createdAt;
+		private String slug;
+		private boolean active;
+		private Long categoryId;
+		private String categoryName;
+		private String categorySlug;
+	}
+
+	@Getter
+	@Setter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
+	public static class ProductSummary {
+		private Long id;
+		private String name;
+		private String slug;
+		private boolean active;
+		private String categoryName;
+		private String categorySlug;
 	}
 
 }
