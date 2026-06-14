@@ -44,13 +44,13 @@ public class CategoryService {
 	}
 	
 	public CategoryResponse getCategoryById(Long id) {
-		Category category = categoryRepository.findById(id)
+		Category category = categoryRepository.findByIdWithParent(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 		return toResponse(category);
 	}
 
 	public CategoryResponse getCategoryBySlug(String slug) {
-		Category category = categoryRepository.findBySlug(slug)
+		Category category = categoryRepository.findBySlugWithParent(slug)
 				.orElseThrow(() -> new ResourceNotFoundException("Category not found with slug: " + slug));
 		return toResponse(category);
 	}
@@ -98,14 +98,16 @@ public class CategoryService {
 	//=============== Helper functions =================
 
 	private CategoryResponse toResponse(Category category) {
+		Category parent = category.getParent();
+		
 		return CategoryResponse.builder()
 				.id(category.getId())
 				.name(category.getName())
 				.description(category.getDescription())
 				.slug(category.getSlug())
-				.parentId(category.getParent() != null ? category.getParent().getId() : null)
-				.parentSlug(category.getParent() != null ? category.getParent().getSlug() : null)
-				.parentCategoryName(category.getParent() != null ? category.getParent().getName() : null)
+				.parentId(parent != null ? parent.getId() : null)
+				.parentSlug(parent != null ? parent.getSlug() : null)
+				.parentCategoryName(parent != null ? parent.getName() : null)
 				.build();
 	}
 	
