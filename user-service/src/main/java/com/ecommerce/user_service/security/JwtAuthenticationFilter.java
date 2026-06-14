@@ -11,6 +11,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+	
+	private static final String COOKIE_NAME = "access_token";
 
 	private final CustomUserDetailService userDetailsService;
 	private final JwtUtil jwtUtil;
@@ -63,6 +66,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		// Check header
 		if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 			return authorizationHeader.substring(7);
+		}
+		
+		// Check cookie
+		if (request.getCookies() != null) {
+			for (Cookie cookie : request.getCookies()) {
+				if (COOKIE_NAME.equals(cookie.getName())) {
+					return cookie.getValue();
+				}
+			}
 		}
 
 		return null;

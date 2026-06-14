@@ -1,9 +1,11 @@
 package com.ecommerce.user_service.controller;
 
-import java.util.Map;
+import java.time.Duration;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,7 +46,15 @@ public class AuthenticationController {
 		// Step 2: Proceed JWT generation
 		final String token = jwtUtil.generateToken(userDetails);
 		
-		return ResponseEntity.ok(Map.of("token", token, "type", "Bearer"));
+		ResponseCookie cookie = ResponseCookie.from("access_token", token)
+				.httpOnly(true)
+				.secure(false)
+				.path("/")
+				.maxAge(Duration.ofMillis(expirationMs))
+				.sameSite("Strict")
+				.build();
+		
+		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
 	}
 
 	@PostMapping("/register")
