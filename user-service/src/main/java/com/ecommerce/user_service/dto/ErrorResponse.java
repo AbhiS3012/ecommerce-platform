@@ -1,13 +1,20 @@
 package com.ecommerce.user_service.dto;
 
-import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
+
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class ErrorResponse {
 
+	private final int status;
 	private final String message;
-	private final Integer status;
+	private final LocalDateTime timestamp;
+
+	public ErrorResponse(int status, String message) {
+		this.status = status;
+		this.message = message;
+		this.timestamp = LocalDateTime.now();
+	}
 
 }

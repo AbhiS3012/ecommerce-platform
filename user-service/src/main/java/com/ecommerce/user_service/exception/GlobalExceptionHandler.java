@@ -17,22 +17,21 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(InvalidCaptchaException.class)
 	public ResponseEntity<ErrorResponse> handleInvalidCaptcha(InvalidCaptchaException ex) {
-		logger.warn("Captcha error: {}", ex.getMessage());
-		ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.FORBIDDEN.value());
-		return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+		logger.warn("Captcha error: {}", ex.getMessage(), ex);
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse(403, ex.getMessage()));
 	}
 
 	@ExceptionHandler(BadCredentialsException.class)
 	public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex) {
-		logger.warn("Bad credentials: {}", ex.getMessage());
-		ErrorResponse error = new ErrorResponse("Invalid username or password", HttpStatus.UNAUTHORIZED.value());
-		return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+		logger.warn("Bad credentials: {}", ex.getMessage(), ex);
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(new ErrorResponse(401, "Invalid username or password"));
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-		logger.error("Unexpected error", ex);
-		ErrorResponse error = new ErrorResponse("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR.value());
-		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+		logger.error("Unexpected error: {}", ex.getMessage(), ex);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(new ErrorResponse(500, "Something went wrong"));
 	}
 }
