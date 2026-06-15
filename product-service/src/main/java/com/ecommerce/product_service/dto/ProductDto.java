@@ -54,8 +54,8 @@ public class ProductDto {
 		private String name;
 		private String slug;
 		private boolean active;
+		private Long categoryId;
 		private String categoryName;
-		private String categorySlug;
 	}
 
 }
