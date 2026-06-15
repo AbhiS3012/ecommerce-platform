@@ -44,18 +44,18 @@ public class CategoryController {
 
 	@GetMapping("/roots")
 	public ResponseEntity<List<CategorySummary>> getRootCategories() {
-		return ResponseEntity.ok().body(categoryService.getRootCategories());
+		return ResponseEntity.ok(categoryService.getRootCategories());
 	}
 
 	@GetMapping("/{parentId}/subcategories")
 	public ResponseEntity<List<CategorySummary>> getSubCategories(@PathVariable Long parentId) {
-		return ResponseEntity.ok().body(categoryService.getSubCategories(parentId));
+		return ResponseEntity.ok(categoryService.getSubCategories(parentId));
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<CategoryResponse> updateCategory(@PathVariable Long id,
 			@RequestBody @Valid CategoryRequest request) {
-		return ResponseEntity.ok().body(categoryService.updateCategory(id, request));
+		return ResponseEntity.ok(categoryService.updateCategory(id, request));
 	}
 
 }

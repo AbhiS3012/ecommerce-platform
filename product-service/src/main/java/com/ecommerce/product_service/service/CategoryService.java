@@ -68,30 +68,35 @@ public class CategoryService {
 	public CategoryResponse updateCategory(Long id, CategoryRequest request) {
 		Category category = categoryRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-		
-		if(!request.getName().equals(category.getName())) {
+
+		// update slug only if name changed
+		if (!request.getName().equals(category.getName())) {
 			String slug = SlugUtil.generateSlug(request.getName());
 			category.setSlug(slug);
 		}
-		
+
 		category.setName(request.getName());
 		category.setDescription(request.getDescription());
-		
-		if(request.getParentId() != null) {
-			
+
+		if (request.getParentId() != null) {
+
 			if (request.getParentId().equals(id)) {
 				throw new InvalidOperationException("Category cannot be its own parent");
 			}
-			
-			Category parent = categoryRepository.findById(request.getParentId())
-					.orElseThrow(() -> new ResourceNotFoundException("Parent category not found"));
-			
-			category.setParent(parent);
-			
+
+			// update parent category only if changed
+			Long parentId = category.getParent() != null ? category.getParent().getId() : null;
+
+			if (!request.getParentId().equals(parentId)) {
+				Category parent = categoryRepository.findById(request.getParentId())
+						.orElseThrow(() -> new ResourceNotFoundException("Parent category not found"));
+				category.setParent(parent);
+			}
+
 		} else {
 			category.setParent(null);
 		}
-		
+
 		return toResponse(categoryRepository.save(category));
 	}
 
