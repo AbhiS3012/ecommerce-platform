@@ -24,4 +24,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
 	List<Category> findByParentId(Long parentId);
 
+	@Query("SELECT c.slug FROM Category c WHERE c.slug LIKE :slug%")
+	List<String> findSlugsStartsWith(@Param("slug") String slug);
+
 }

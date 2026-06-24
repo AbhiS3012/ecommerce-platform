@@ -26,7 +26,7 @@ public class CategoryService {
 	@Transactional
 	public CategoryResponse createCategory(CategoryRequest request) {
 		//auto generate slug from name
-		String slug = SlugUtil.generateSlug(request.getName());
+		String slug = SlugUtil.generateUniqueSlug(request.getName(), categoryRepository::findSlugsStartsWith);
 		
 		Category category = Category.builder()
 				.name(request.getName())
@@ -71,7 +71,7 @@ public class CategoryService {
 
 		// update slug only if name changed
 		if (!request.getName().equals(category.getName())) {
-			String slug = SlugUtil.generateSlug(request.getName());
+			String slug = SlugUtil.generateUniqueSlug(request.getName(), categoryRepository::findSlugsStartsWith);
 			category.setSlug(slug);
 		}
 

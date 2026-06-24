@@ -25,5 +25,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	List<Product> findAllWithCategory();
 
 	List<Product> findByCategoryId(Long categoryId);
+	
+	@Query("SELECT p.slug FROM Product p WHERE p.slug LIKE :slug%")
+	List<String> findSlugsStartsWith(@Param("slug") String slug);
 
 }
