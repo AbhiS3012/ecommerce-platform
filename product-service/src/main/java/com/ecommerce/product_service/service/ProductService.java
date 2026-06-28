@@ -14,7 +14,6 @@ import com.ecommerce.product_service.entity.Product;
 import com.ecommerce.product_service.exception.ResourceNotFoundException;
 import com.ecommerce.product_service.repository.CategoryRepository;
 import com.ecommerce.product_service.repository.ProductRepository;
-import com.ecommerce.product_service.util.SlugUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +23,7 @@ public class ProductService {
 
 	private final ProductRepository productRepository;
 	private final CategoryRepository categoryRepository;
+	private final SlugService slugService;
 	
 	@Transactional
 	public ProductResponse createProduct(ProductRequest request) {
@@ -32,7 +32,7 @@ public class ProductService {
 				.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 		
 		//auto generate slug from name
-		String slug = SlugUtil.generateUniqueSlug(request.getName(), productRepository::findSlugsStartsWith);
+		String slug = slugService.generateUniqueSlug(request.getName(), productRepository::findSlugsStartsWith);
 		
 		Product product = Product.builder()
 				.name(request.getName())
@@ -76,7 +76,7 @@ public class ProductService {
 
 		// update slug only if name changed
 		if (!request.getName().equals(product.getName())) {
-			String slug = SlugUtil.generateUniqueSlug(request.getName(), productRepository::findSlugsStartsWith);
+			String slug = slugService.generateUniqueSlug(request.getName(), productRepository::findSlugsStartsWith);
 			product.setSlug(slug);
 		}
 

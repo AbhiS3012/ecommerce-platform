@@ -13,7 +13,6 @@ public class CategoryDto {
 	@Setter
 	@NoArgsConstructor
 	@AllArgsConstructor
-	@Builder
 	public static class CategoryRequest {
 		@NotBlank(message = "Name is required")
 		private String name;

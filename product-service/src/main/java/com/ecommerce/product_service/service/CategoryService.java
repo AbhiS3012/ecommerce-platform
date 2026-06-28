@@ -13,7 +13,6 @@ import com.ecommerce.product_service.entity.Category;
 import com.ecommerce.product_service.exception.InvalidOperationException;
 import com.ecommerce.product_service.exception.ResourceNotFoundException;
 import com.ecommerce.product_service.repository.CategoryRepository;
-import com.ecommerce.product_service.util.SlugUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,11 +21,12 @@ import lombok.RequiredArgsConstructor;
 public class CategoryService {
 
 	private final CategoryRepository categoryRepository;
+	private final SlugService slugService;
 	
 	@Transactional
 	public CategoryResponse createCategory(CategoryRequest request) {
 		//auto generate slug from name
-		String slug = SlugUtil.generateUniqueSlug(request.getName(), categoryRepository::findSlugsStartsWith);
+		String slug = slugService.generateUniqueSlug(request.getName(), categoryRepository::findSlugsStartsWith);
 		
 		Category category = Category.builder()
 				.name(request.getName())
@@ -71,7 +71,7 @@ public class CategoryService {
 
 		// update slug only if name changed
 		if (!request.getName().equals(category.getName())) {
-			String slug = SlugUtil.generateUniqueSlug(request.getName(), categoryRepository::findSlugsStartsWith);
+			String slug = slugService.generateUniqueSlug(request.getName(), categoryRepository::findSlugsStartsWith);
 			category.setSlug(slug);
 		}
 
