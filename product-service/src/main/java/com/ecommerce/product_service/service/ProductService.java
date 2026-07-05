@@ -39,10 +39,8 @@ public class ProductService {
 				.description(request.getDescription())
 				.slug(slug)
 				.active(request.isActive())
+				.category(category)
 				.build();
-		
-		
-		product.setCategory(category);
 		
 		return toResponse(productRepository.save(product));
 	}
