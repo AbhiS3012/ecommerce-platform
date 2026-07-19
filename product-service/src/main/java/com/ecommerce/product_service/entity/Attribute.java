@@ -22,7 +22,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class Attribute extends AuditableEntity {
+public class Attribute extends BaseEntity {
 
 	@Column(nullable = false)
 	private String name; // e.g. "Color", "Size"

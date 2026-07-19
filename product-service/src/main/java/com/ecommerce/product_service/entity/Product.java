@@ -20,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class Product extends AuditableEntity {
+public class Product extends BaseEntity {
 
 	@Column(nullable = false)
 	private String name;

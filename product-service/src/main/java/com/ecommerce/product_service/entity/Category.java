@@ -19,7 +19,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class Category extends AuditableEntity {
+public class Category extends BaseEntity {
 
 	@Column(nullable = false)
 	private String name;

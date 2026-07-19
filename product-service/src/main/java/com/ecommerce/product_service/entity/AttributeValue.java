@@ -18,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class AttributeValue extends AuditableEntity {
+public class AttributeValue extends BaseEntity {
 
 	@Column(nullable = false)
 	private String value; // e.g. "Red", "XL", "Cotton"
