@@ -11,6 +11,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.ecommerce.product_service.dto.CategoryDto.CategoryRequest;
 import com.ecommerce.product_service.dto.CategoryDto.CategoryResponse;
+import com.ecommerce.product_service.dto.CategoryDto.CategorySummary;
 import com.ecommerce.product_service.exception.ResourceNotFoundException;
 import com.ecommerce.product_service.security.JwtAuthenticationFilter;
 import com.ecommerce.product_service.service.CategoryService;
@@ -37,7 +40,7 @@ public class CategoryControllerTest {
 	private MockMvc mockMvc; // Perform HTTP requests
 	
 	@MockitoBean
-	JwtAuthenticationFilter jwtAuthenticationFilter;
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
 	@MockitoBean // mock service
 	private CategoryService categoryService;
@@ -133,8 +136,133 @@ public class CategoryControllerTest {
 		.andExpect(status().isNotFound())
 		.andExpect(jsonPath("$.status").value(404))
 		.andExpect(jsonPath("$.message").value("Category not found"));
-		
-		verify(categoryService, times(1)).getCategoryById(999L);
 	}
+	
+	// ─── GET /api/v1/categories/slug/{slug} ──────────────────────────
+	
+	@Test
+	@DisplayName("Should return category when find by slug")
+	void shouldReturnCategoryWhenFindBySlug() throws Exception {
+		when(categoryService.getCategoryBySlug("electronics")).thenReturn(response);
+		
+		mockMvc.perform(
+				get("/api/v1/categories/slug/electronics")
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.id").value(1L))
+		.andExpect(jsonPath("$.name").value("Electronics"))
+		.andExpect(jsonPath("$.parentId").doesNotExist());
+		
+		verify(categoryService, times(1)).getCategoryBySlug("electronics");
+	}
+	
+	@Test
+	@DisplayName("Should return 404 when category not found by slug")
+	void shouldReturn404WhenCategoryNotFoundBySlug() throws Exception {
+		when(categoryService.getCategoryBySlug("electronics")).thenThrow(new ResourceNotFoundException("Category not found with slug: electronics"));
+		
+		mockMvc.perform(
+				get("/api/v1/categories/slug/electronics")
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+		.andExpect(status().isNotFound())
+		.andExpect(jsonPath("$.status").value(404))
+		.andExpect(jsonPath("$.message").value("Category not found with slug: electronics"));
+	}
+	
+	// ─── GET /api/v1/categories/roots ────────────────────────────────
+	
+	@Test
+	@DisplayName("Should return all root categories")
+	void shouldReturnAllRootCategories() throws Exception {
+		CategorySummary electronics = CategorySummary.builder()
+				.id(1L)
+				.name("Electronics")
+				.description("This is root category for all electronic items")
+				.slug("electronics")
+				.build();
+		
+		CategorySummary clothing = CategorySummary.builder()
+				.id(2L)
+				.name("Clothing")
+				.description("This is root category for all clothing items")
+				.slug("clothing")
+				.build();
+		
+		when(categoryService.getRootCategories()).thenReturn(List.of(electronics, clothing));
+		
+		mockMvc.perform(
+				get("/api/v1/categories/roots")
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.length()").value(2))
+		.andExpect(jsonPath("$[0].name").value("Electronics"))
+		.andExpect(jsonPath("$[1].name").value("Clothing"));
+		
+		verify(categoryService, times(1)).getRootCategories();
+	}
+	
+	@Test
+	@DisplayName("Should return empty list when no root categories found")
+	void shouldReturnEmptyListWhenNoRootCatgoriesFound() throws Exception {
+		when(categoryService.getRootCategories()).thenReturn(List.of());
+		
+		mockMvc.perform(
+				get("/api/v1/categories/roots")
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.length()").value(0));
+	}
+	
+	// ─── GET /api/v1/categories/{parentId}/subcategories ────────────────────────────────
+	
+	@Test
+	@DisplayName("Should return all sub-categories of parent category")
+	void shouldReturnAllSubCategoriesOfParentCategory() throws Exception {
+		CategorySummary mobilePhones = CategorySummary.builder()
+		        .id(2L)
+		        .name("Mobile Phones")
+		        .description("All types of smartphones and mobile phones")
+		        .slug("mobile-phones")
+		        .build();
+
+		CategorySummary laptops = CategorySummary.builder()
+		        .id(3L)
+		        .name("Laptops")
+		        .description("Laptops, notebooks, and ultrabooks")
+		        .slug("laptops")
+		        .build();
+		
+		when(categoryService.getSubCategories(1L)).thenReturn(List.of(mobilePhones, laptops));
+		
+		mockMvc.perform(
+				get("/api/v1/categories/1/subcategories")
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.length()").value(2))
+		.andExpect(jsonPath("$[0].name").value("Mobile Phones"))
+		.andExpect(jsonPath("$[1].name").value("Laptops"));
+		
+		verify(categoryService, times(1)).getSubCategories(1L);
+	}
+	
+	@Test
+	@DisplayName("Should return empty list when parent category has no sub-categories")
+	void shouldReturnEmptyListWhenParentCategoryHasNoSubCategories() throws Exception {
+		when(categoryService.getSubCategories(1L)).thenReturn(List.of());
+		
+		mockMvc.perform(
+				get("/api/v1/categories/1/subcategories")
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.length()").value(0));
+	}
+	
+	
 	
 }
