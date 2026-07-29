@@ -1,12 +1,14 @@
 package com.ecommerce.product_service.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,6 +31,7 @@ import com.ecommerce.product_service.dto.CategoryDto.CategorySummary;
 import com.ecommerce.product_service.exception.ResourceNotFoundException;
 import com.ecommerce.product_service.security.JwtAuthenticationFilter;
 import com.ecommerce.product_service.service.CategoryService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = CategoryController.class)
@@ -48,11 +51,14 @@ public class CategoryControllerTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 	
-	private CategoryResponse response;
+	private CategoryRequest categoryRequest;
+	private CategoryResponse categoryResponse;
 	
 	@BeforeEach
 	void setUp() {
-		response = CategoryResponse.builder()
+		categoryRequest = new CategoryRequest("Electronics", "This is root category for all electronic items", null);
+		
+		categoryResponse = CategoryResponse.builder()
 				.id(1L)
 				.name("Electronics")
 				.description("This is root category for all electronic items")
@@ -68,9 +74,7 @@ public class CategoryControllerTest {
 	@Test
 	@DisplayName("Should create category and return 201")
 	void shouldCreateCategoryAndReturn201() throws Exception {
-		CategoryRequest categoryRequest = new CategoryRequest("Electronics", "This is root category for all electronic items", null);
-		
-		when(categoryService.createCategory(any(CategoryRequest.class))).thenReturn(response);
+		when(categoryService.createCategory(any(CategoryRequest.class))).thenReturn(categoryResponse);
 		
 		mockMvc.perform(
 				post("/api/v1/categories")
@@ -109,7 +113,7 @@ public class CategoryControllerTest {
 	@Test
 	@DisplayName("Should return category when find by id")
 	void shouldReturnCategoryWhenFindById() throws Exception {
-		when(categoryService.getCategoryById(1L)).thenReturn(response);
+		when(categoryService.getCategoryById(1L)).thenReturn(categoryResponse);
 		
 		mockMvc.perform(
 				get("/api/v1/categories/1")
@@ -143,7 +147,7 @@ public class CategoryControllerTest {
 	@Test
 	@DisplayName("Should return category when find by slug")
 	void shouldReturnCategoryWhenFindBySlug() throws Exception {
-		when(categoryService.getCategoryBySlug("electronics")).thenReturn(response);
+		when(categoryService.getCategoryBySlug("electronics")).thenReturn(categoryResponse);
 		
 		mockMvc.perform(
 				get("/api/v1/categories/slug/electronics")
@@ -263,6 +267,37 @@ public class CategoryControllerTest {
 		.andExpect(jsonPath("$.length()").value(0));
 	}
 	
+	// ─── PUT /api/v1/categories/{id} ────────────────────────────────
 	
+	@Test
+	@DisplayName("Should update category and return 200")
+	void shouldUpdateCategoryAndReturn200() throws JsonProcessingException, Exception {
+		when(categoryService.updateCategory(eq(1L), any(CategoryRequest.class))).thenReturn(categoryResponse);
+		
+		mockMvc.perform(
+				put("/api/v1/categories/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(categoryRequest))
+			)
+		.andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(1L))
+        .andExpect(jsonPath("$.name").value("Electronics"));
+		
+		verify(categoryService, times(1)).updateCategory(eq(1L), any(CategoryRequest.class));
+	}
+	
+	@Test
+	@DisplayName("Should return 404 when updating non existing entry")
+	void shouldReturn404WhenUpdatingNonExistingEntry() throws JsonProcessingException, Exception {
+		when(categoryService.updateCategory(eq(999L), any(CategoryRequest.class))).thenThrow(new ResourceNotFoundException("Category not found"));
+		
+		mockMvc.perform(
+				put("/api/v1/categories/999")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(categoryRequest))
+			)
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.status").value(404));
+	}
 	
 }
