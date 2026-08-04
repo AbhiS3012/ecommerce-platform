@@ -2,6 +2,7 @@ package com.ecommerce.product_service.exception;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ public class GlobalExceptionHandler {
 	private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException ex) {
+	public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
 		logger.error("Validaions failed: {}", ex.getMessage(), ex);
 		Map<String, String> errors = new HashMap<String, String>();
 		ex.getBindingResult().getAllErrors().forEach(error -> {
@@ -28,7 +29,9 @@ public class GlobalExceptionHandler {
 			String message = error.getDefaultMessage();
 			errors.put(field, message);
 		});
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+		
+		String message = errors.values().stream().collect(Collectors.joining(","));
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400, message));
 	}
 
 	@ExceptionHandler(InvalidOperationException.class)

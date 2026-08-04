@@ -38,7 +38,7 @@ public class ProductController {
 	}
 
 	@GetMapping("/slug/{slug}")
-	public ResponseEntity<ProductResponse> getProductById(@PathVariable String slug) {
+	public ResponseEntity<ProductResponse> getProductBySlug(@PathVariable String slug) {
 		return ResponseEntity.ok(productService.getProductBySlug(slug));
 	}
 	
